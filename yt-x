@@ -163,6 +163,7 @@ CMD_INPUT=""
 # CONFIGURATION & ENVIRONMENT
 # ==============================================================================
 __load_default_config() {
+  : "${CONFIG_ENABLE_LOADER:=true}"
   : "${CONFIG_AUTOLOADED_EXTENSIONS:=}"
   : "${CONFIG_ENABLE_COLORS:=true}"
   : "${CONFIG_LAUNCHER:=fzf}"
@@ -849,6 +850,9 @@ _print_config() {
 #
 # ===================================================================================
 
+# Enable or disable the loading animation
+CONFIG_ENABLE_LOADER="$CONFIG_ENABLE_LOADER"
+
 # List of extensions to load automatically on startup
 CONFIG_AUTOLOADED_EXTENSIONS="$CONFIG_AUTOLOADED_EXTENSIONS"
 
@@ -1488,14 +1492,13 @@ __ui_default_loader() {
   local cmd
   cmd="$*"
 
-  if _dep_ch gum; then
+  if _dep_ch gum && "$CONFIG_ENABLE_LOADER"; then
     # shellcheck disable=SC2086
     gum spin $CONFIG_GUM_SPIN_OPTS --show-output -- $cmd
   else
     printf '%s\n' "$TXT_LOADING" >/dev/stderr
     $cmd
   fi
-
 }
 
 __ui_rofi_loader() {
